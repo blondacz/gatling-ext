@@ -5,9 +5,9 @@ import cats.effect.std.Queue
 import fs2.io.file.{Files, Path}
 import fs2.{Pipe, Stream, text}
 
-class LogReporter(path: Path) {
+object LogReporter {
 
-  def writer: IO[StringFileWriter] = newWriteToFile(path)
+  def apply(path: Path): IO[StringFileWriter] = newWriteToFile(path)
 
   private def toFile(path: Path): Pipe[IO, String, Unit] =
     _.through(text.utf8.encode).through(Files[IO].writeAll(path)).debug()

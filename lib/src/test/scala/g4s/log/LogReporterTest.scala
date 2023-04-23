@@ -10,14 +10,14 @@ import org.scalatest.matchers.should.Matchers
 import java.nio.file.Paths
 
 class LogReporterTest extends AnyFreeSpec with Matchers {
-
+   def !!! : Nothing = throw new AssertionError("Never expected")
   "can write log file" in {
-    val buildPath = Path.fromNioPath(Paths.get(sys.props.getOrElse("user.dir", ???)))
+    val buildPath = Path.fromNioPath(Paths.get(sys.props.getOrElse("user.dir", !!!)))
 
     val files = Files[IO]
     val logFile = for {
       tmp <- files.createTempFile(Some(buildPath.resolve("build")), "perf", "log", None)
-      w <- new LogReporter(tmp).writer
+      w <- LogReporter(tmp)
       _ <- w.write(Assertion.AllOK)
       _ <- w.write(Run(classOf[MyLog], 123L))
       _ <- w.write(ScenarioStart("BasicSimulation2", 233))

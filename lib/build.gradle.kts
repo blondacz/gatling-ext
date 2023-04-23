@@ -2,6 +2,8 @@
 plugins {
     scala
     `java-library`
+    id("com.github.maiflai.scalatest") version "0.32"
+
 }
 
 repositories {
@@ -14,5 +16,6 @@ dependencies {
     implementation("co.fs2:fs2-io_2.13:3.6.1")
 
 
-    testImplementation("org.scalatest:scalatest_2.13:3.2.14")
+    testImplementation("org.scalatest:scalatest_2.13:3.2.0")
+    testRuntimeOnly("com.vladsch.flexmark:flexmark-all:0.35.10")
 }
