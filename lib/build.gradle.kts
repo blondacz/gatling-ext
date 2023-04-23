@@ -2,7 +2,6 @@
 plugins {
     scala
     `java-library`
-    id("io.gatling.gradle") version "3.9.3.1"
 }
 
 repositories {
@@ -16,5 +15,4 @@ dependencies {
 
 
     testImplementation("org.scalatest:scalatest_2.13:3.2.14")
-    testImplementation("org.scalatestplus:junit-4-13_2.13:3.2.2.0")
 }
