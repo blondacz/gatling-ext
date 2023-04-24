@@ -7,3 +7,10 @@ trait StringFileWriter {
 
   def close(): IO[Unit]
 }
+
+object StringFileWriter {
+  implicit class StringFileWriterOps[A <: LogLine : StringEncoder](ll : A) {
+    def write(implicit w: StringFileWriter): IO[Unit] = w.write(ll)
+  }
+
+}
