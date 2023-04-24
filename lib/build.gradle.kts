@@ -3,7 +3,7 @@ plugins {
     scala
     `java-library`
     id("com.github.maiflai.scalatest") version "0.32"
-
+    `maven-publish`
 }
 
 repositories {

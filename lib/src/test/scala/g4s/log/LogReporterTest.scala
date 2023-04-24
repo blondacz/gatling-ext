@@ -17,13 +17,13 @@ class LogReporterTest extends AnyFreeSpec with Matchers {
   val expectedFileContents: String =
     s"""ASSERTION	AAECAAIFAAAAAAAAAFlA
        |RUN	g4s.log.MyLog	mylog	123\t \t3.9.3
-       |USER	BasicSimulation2	START	233
-       |USER	BasicSimulation2	START	234
+       |USER	BasicPerf2	START	233
+       |USER	BasicPerf2	START	234
        |REQUEST		request_1	111	112	OK\t\u0020
        |REQUEST		request_1	211	212	OK\t\u0020
        |REQUEST		request_1	311	312	OK\t\u0020
-       |USER	BasicSimulation2	END	333
-       |USER	BasicSimulation2	END	334
+       |USER	BasicPerf2	END	333
+       |USER	BasicPerf2	END	334
        |""".stripMargin
 
 
@@ -37,13 +37,13 @@ class LogReporterTest extends AnyFreeSpec with Matchers {
       w <- LogReporter(tmp)
       _ <- w.write(Assertion.AllOK)
       _ <- w.write(Run(classOf[MyLog], 123L))
-      _ <- w.write(ScenarioStart("BasicSimulation2", 233))
-      _ <- w.write(ScenarioStart("BasicSimulation2", 234))
+      _ <- w.write(ScenarioStart("BasicPerf2", 233))
+      _ <- w.write(ScenarioStart("BasicPerf2", 234))
       _ <- w.write(Response.ok("request_1", 111, 112))
       _ <- w.write(Response.ok("request_1", 211, 212))
       _ <- w.write(Response.ok("request_1", 311, 312))
-      _ <- w.write(ScenarioEnd("BasicSimulation2", 333))
-      _ <- w.write(ScenarioEnd("BasicSimulation2", 334))
+      _ <- w.write(ScenarioEnd("BasicPerf2", 333))
+      _ <- w.write(ScenarioEnd("BasicPerf2", 334))
       _ <- w.close()
       perflog <- files.readUtf8(tmp).compile.string
     } yield perflog
@@ -65,11 +65,11 @@ class LogReporterTest extends AnyFreeSpec with Matchers {
       w  <- LogReporter(tmp)
       _ <- Assertion.AllOK.write(w)
       _ <- Run(classOf[MyLog], 123L).write(w)
-      _ <- ScenarioStart("BasicSimulation2", 233).write(w)
-      _ <- ScenarioStart("BasicSimulation2", 234).write(w)
+      _ <- ScenarioStart("BasicPerf2", 233).write(w)
+      _ <- ScenarioStart("BasicPerf2", 234).write(w)
       _ <- Stream.emits(Seq(1,2,3)).through(report(w)).compile.drain
-      _ <- ScenarioEnd("BasicSimulation2", 333).write(w)
-      _ <- ScenarioEnd("BasicSimulation2", 334).write(w)
+      _ <- ScenarioEnd("BasicPerf2", 333).write(w)
+      _ <- ScenarioEnd("BasicPerf2", 334).write(w)
       _ <- w.close()
       perflog <- files.readUtf8(tmp).compile.string
     } yield perflog
