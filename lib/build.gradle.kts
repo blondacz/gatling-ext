@@ -25,7 +25,10 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
     }
+    withJavadocJar()
+    withSourcesJar()
 }
+
 
 publishing {
     publications {
@@ -60,8 +63,22 @@ publishing {
     }
     repositories {
         maven {
-            url = uri(layout.buildDirectory.dir("repo"))
+            val releasesRepoUrl = layout.buildDirectory.dir("repos/releases")
+            val snapshotsRepoUrl = layout.buildDirectory.dir("repos/snapshots")
+            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
             name = "test"
         }
+        maven {
+            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+            credentials(PasswordCredentials::class)
+            name = "sonatype"
+        }
     }
+}
+
+
+signing {
+    sign(publishing.publications["log-writer"])
 }
