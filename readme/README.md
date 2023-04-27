@@ -6,17 +6,17 @@ This scala library supports creating performance logfile that.
 
 ```groovy
 //sbt
-libraryDependencies += "dev.g4s" %% "log-writer" % "0.1.0"
+libraryDependencies += "dev.g4s" %% "log-writer" % "@VERSION@"
 ```
 or
 ```groovy
 //gradle
 dependencies {
-    implementation("dev.g4s:log-writer_2.13:0.1.0")
+    implementation("dev.g4s:log-writer_2.13:@VERSION@")
 }
 ```
 
-```scala
+```scala mdoc:compile-only
 //scala
 import cats.effect._
 import fs2._
@@ -24,7 +24,7 @@ import fs2.io.file._
 import g4s.log._
 import g4s.log.LogLine._
 import g4s.log.LogReporter._
-import java.nio.file.Paths                        
+import java.nio.file.Paths            
 
 object MyLog extends IOApp.Simple {
 

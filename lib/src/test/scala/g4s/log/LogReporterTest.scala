@@ -5,7 +5,7 @@ import cats.effect.unsafe.implicits.global
 import fs2.io.file.{Files, Path}
 import fs2.{Pipe, Stream}
 import g4s.log.LogLine._
-import g4s.log.StringFileWriter.StringFileWriterOps
+import LogReporter._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -27,13 +27,13 @@ class LogReporterTest extends AnyFreeSpec with Matchers {
        |""".stripMargin
 
 
-  private val buildPath = Path.fromNioPath(Paths.get(sys.props.getOrElse("user.dir", !!!)))
+  private val buildPath = sys.props.get("user.dir").map(d => Path.fromNioPath(Paths.get(d)).resolve("build"))
 
   "can write log file" in {
 
     val files = Files[IO]
     val logFile = for {
-      tmp <- files.createTempFile(Some(buildPath.resolve("build")), "perf", "log", None)
+      tmp <- files.createTempFile(buildPath, "perf", "log", None)
       w <- LogReporter(tmp)
       _ <- w.write(Assertion.AllOK)
       _ <- w.write(Run(classOf[MyLog], 123L))
@@ -53,7 +53,7 @@ class LogReporterTest extends AnyFreeSpec with Matchers {
     logFile.unsafeRunSync() shouldBe expectedFileContents
   }
 
-  def report(w: StringFileWriter) : Pipe[IO,Int,Unit] = _.evalMap(i =>
+  def report(w: LogReporter) : Pipe[IO,Int,Unit] = _.evalMap(i =>
     w.write(Response.ok("request_1", i*100 + 11, i*100 +12))
   )
 
@@ -61,7 +61,7 @@ class LogReporterTest extends AnyFreeSpec with Matchers {
     val files = Files[IO]
 
     val logFile = for {
-      tmp <- files.createTempFile(Some(buildPath.resolve("build")), "perf", "log", None)
+      tmp <- files.createTempFile(buildPath, "perf", "log", None)
       w  <- LogReporter(tmp)
       _ <- Assertion.AllOK.write(w)
       _ <- Run(classOf[MyLog], 123L).write(w)

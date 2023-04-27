@@ -16,9 +16,9 @@ dependencies {
     implementation("co.fs2:fs2-core_2.13:3.6.1")
     implementation("co.fs2:fs2-io_2.13:3.6.1")
 
-
     testImplementation("org.scalatest:scalatest_2.13:3.2.0")
     testRuntimeOnly("com.vladsch.flexmark:flexmark-all:0.35.10")
+    testRuntimeOnly("org.scalameta:mdoc_2.13:2.3.7")
 }
 
 java {
@@ -82,4 +82,19 @@ publishing {
 signing {
     useGpgCmd()
     sign(publishing.publications["log-writer"])
+}
+
+
+
+tasks.register<JavaExec>("mdoc") {
+  description = "Generates the readme with mdoc processing"
+  group = "doc"
+  classpath(sourceSets["test"].runtimeClasspath)
+  mainClass.set("mdoc.Main")
+  args("--verbose",
+          "--site.VERSION", "${project.version}",
+          "--in","../readme/README.md",
+          "--out","../",
+          "--classpath",sourceSets["test"].runtimeClasspath.asPath
+  )
 }
